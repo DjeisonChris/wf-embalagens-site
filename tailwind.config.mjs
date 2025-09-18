@@ -15,6 +15,10 @@ const config = {
         'brand-brown': '#5C3A2E',  // O marrom do logo
         'brand-yellow': '#F9E01E', // O amarelo do logo
         'brand-footer': '#1A1A1A', // O fundo escuro do rodapé
+        'brand-whatsapp': '#25D366',
+      },
+      fontFamily: {
+        sans: ['Roboto', 'sans-serif'],
       },
     },
   },

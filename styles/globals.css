@@ -14,7 +14,15 @@
   display: flex;
 }
 .embla__slide {
-  flex: 0 0 30%; /* Cada slide ocupa 30% da largura, mostrando um pouco mais de 3 por vez */
+  /* Padrão (Mobile): ocupa 100% da tela */
+  flex: 0 0 100%; 
   min-width: 0;
   padding-left: 1rem;
+}
+
+/* Telas médias (md) ou maiores: mostra 3 slides */
+@media (min-width: 768px) {
+  .embla__slide {
+    flex: 0 0 33.33%; /* 100% / 3 = 33.33% */
+  }
 }

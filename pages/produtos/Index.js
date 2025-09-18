@@ -1,6 +1,7 @@
 // pages/produtos.js
 import { useState } from 'react'; // Importamos o useState do React
-import ProductCard from '../components/ProductCard';
+import Link from 'next/link';
+import ProductCard from '../../components/ProductCard';
 
 export async function getStaticProps() {
   const sheetId = process.env.GOOGLE_SHEET_ID;
@@ -47,21 +48,15 @@ export async function getStaticProps() {
 }
 
 const ProdutosPage = ({ products, categories }) => {
-  // 3. CRIAMOS OS ESTADOS (as "memórias" do componente)
-  const [searchTerm, setSearchTerm] = useState(''); // Para guardar o texto da busca
-  const [selectedCategory, setSelectedCategory] = useState('Todos'); // Para guardar a categoria selecionada
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('Todos');
 
-  // 4. LÓGICA DE FILTRO
   const filteredProducts = products
     .filter(product => {
-      // Filtro de categoria
-      if (selectedCategory === 'Todos') {
-        return true; // Se 'Todos' está selecionado, mostra todos os produtos
-      }
-      return product.category === selectedCategory; // Senão, mostra apenas os da categoria selecionada
+      if (selectedCategory === 'Todos') return true;
+      return product.category === selectedCategory;
     })
     .filter(product => {
-      // Filtro de busca (procura no nome do produto, ignorando maiúsculas/minúsculas)
       return product.name.toLowerCase().includes(searchTerm.toLowerCase());
     });
 
@@ -70,18 +65,19 @@ const ProdutosPage = ({ products, categories }) => {
       <div className="w-full max-w-6xl">
         <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center text-gray-800">Nossos Produtos</h1>
         
-        {/* 5. ÁREA DE BUSCA E FILTROS (agora funcional) */}
+        {/* ... (Área de busca e filtros continua a mesma) ... */}
         <div className="mb-8 p-4 bg-white rounded-lg shadow-md flex flex-col gap-4">
           <input 
             type="text"
             placeholder="Buscar pelo nome do produto..."
             className="w-full p-2 border border-gray-300 rounded-md"
-            onChange={(e) => setSearchTerm(e.target.value)} // Atualiza o estado da busca a cada letra digitada
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2zM3 16a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z" /></svg>
             <button 
               onClick={() => setSelectedCategory('Todos')}
-              className={`px-4 py-2 rounded-md transition-colors ${selectedCategory === 'Todos' ? 'bg-red-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+              className={`px-4 py-2 rounded-md font-bold transition-colors ${selectedCategory === 'Todos' ? 'bg-brand-red text-white' : 'bg-gray-200 hover:bg-brand-yellow'}`}
             >
               Todos
             </button>
@@ -89,7 +85,7 @@ const ProdutosPage = ({ products, categories }) => {
               <button 
                 key={category.name}
                 onClick={() => setSelectedCategory(category.name)}
-                className={`px-4 py-2 rounded-md transition-colors ${selectedCategory === category.name ? 'bg-red-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+                className={`px-4 py-2 rounded-md font-bold transition-colors ${selectedCategory === category.name ? 'bg-brand-red text-white' : 'bg-gray-200 hover:bg-brand-yellow'}`}
               >
                 {category.name}
               </button>
@@ -97,7 +93,7 @@ const ProdutosPage = ({ products, categories }) => {
           </div>
         </div>
 
-        {/* 6. GRID DE PRODUTOS (agora exibe a lista filtrada) */}
+        {/* Grid de Produtos */}
         {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {filteredProducts.map((product) => (
@@ -107,6 +103,20 @@ const ProdutosPage = ({ products, categories }) => {
         ) : (
           <p className="text-center text-gray-500 py-10">Nenhum produto encontrado com os filtros selecionados.</p>
         )}
+
+        {/* 2. NOVA SEÇÃO ADICIONADA AQUI */}
+        <section className="mt-12 text-center bg-white p-8 rounded-lg shadow-md">
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">
+              Não encontrou o que procurava?
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Entre em contato conosco e solicite um orçamento personalizado
+            </p>
+            <Link href="/contato" className="bg-brand-red text-white font-bold py-3 px-8 rounded-md hover:bg-brand-red-dark transition-colors">
+              Solicitar Orçamento Personalizado
+            </Link>
+        </section>
+
       </div>
     </main>
   );
