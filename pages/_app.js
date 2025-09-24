@@ -32,7 +32,7 @@ function MyApp({ Component, pageProps }) {
         declineButtonStyle={{ backgroundColor: "#4A4A4A", fontSize: "14px", borderRadius: '5px' }}
         expires={150}
       >
-        Este site usa cookies para melhorar a experiência do usuário. Ao clicar em "Aceitar tudo", você concorda com o armazenamento de cookies no seu dispositivo. Saiba mais em nossa{" "}
+        Este site usa cookies para melhorar a experiência do usuário. Ao clicar em 'Aceitar tudo', você concorda com o armazenamento de cookies no seu dispositivo. Saiba mais em nossa{" "}
         <Link href="/politica-de-privacidade" className="text-brand-yellow underline hover:text-white">
           Política de Privacidade
         </Link>

@@ -10,12 +10,12 @@ const PoliticaDePrivacidadePage = () => {
                 
                 <h2>1. Introdução</h2>
                 <p>
-                    A WF Embalagens ("nós", "nosso") opera o site {' '}
+                    A WF Embalagens ('nós', 'nosso') opera o site {' '}
                     {/* LINK CORRIGIDO AQUI */}
                     <Link href="/" className="text-brand-red underline hover:text-brand-red-dark">
                         wfembalagens.com.br
                     </Link>
-                    {' '} (o "Serviço"). 
+                    {' '} (o 'Serviço'). 
                     Esta página informa sobre nossas políticas relativas à coleta, uso e divulgação de dados pessoais quando você utiliza nosso Serviço e as opções que você tem em relação a esses dados, em conformidade com a Lei Geral de Proteção de Dados (LGPD).
                 </p>
 
@@ -70,7 +70,7 @@ const PoliticaDePrivacidadePage = () => {
                 
                 <h2>9. Alterações a Esta Política de Privacidade</h2>
                 <p>
-                    Podemos atualizar nossa Política de Privacidade de tempos em tempos. Notificaremos você sobre quaisquer alterações, publicando a nova Política de Privacidade nesta página e atualizando a data da "última atualização" no topo.
+                    Podemos atualizar nossa Política de Privacidade de tempos em tempos. Notificaremos você sobre quaisquer alterações, publicando a nova Política de Privacidade nesta página e atualizando a data da 'última atualização' no topo.
                 </p>
 
                 <h2>10. Contato</h2>
