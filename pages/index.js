@@ -1,4 +1,4 @@
-// pages/index.js (COMPLETO E ATUALIZADO)
+// pages/index.js
 import { EmblaCarousel } from '../components/Carousel';
 import { HeroCarousel } from '../components/HeroCarousel';
 import Link from 'next/link';
@@ -9,6 +9,7 @@ import Head from 'next/head';
 export async function getStaticProps() {
   const sheetId = process.env.GOOGLE_SHEET_ID;
   const apiKey = process.env.GOOGLE_SHEETS_API_KEY;
+
   let banners = [];
   let featuredProducts = [];
   let featuredCategoriesWithProducts = [];
@@ -35,9 +36,8 @@ export async function getStaticProps() {
     if (productsData.values) {
       const allProducts = productsData.values.slice(1).map(row => ({
         id: row[0] || null, name: row[1] || '', description: row[2] || '',
-        volume: row[3] || '', brand: row[4] || null, // <-- MARCA ADICIONADA (ÍNDICE 4)
-        category: row[5] || '', imageUrl: row[6] || '',
-        isFeatured: row[7] || 'NÃO', isActive: row[8] || 'NÃO',
+        volume: row[3] || '', brand: row[4] || null, category: row[5] || '', 
+        imageUrl: row[6] || '', isFeatured: row[7] || 'NÃO', isActive: row[8] || 'NÃO',
         slug: row[9] || null
       })).filter(p => p.isActive === 'SIM');
 
@@ -58,7 +58,9 @@ export async function getStaticProps() {
         }
       }
     }
-  } catch (error) { console.error("Falha ao buscar dados para a Home:", error.message); }
+  } catch (error) {
+    console.error("Falha ao buscar dados para a Home:", error.message);
+  }
   
   return {
     props: { banners, featuredProducts, featuredCategoriesWithProducts, },
@@ -83,94 +85,100 @@ export default function Home({ banners, featuredProducts, featuredCategoriesWith
   ];
 
   return (
-    <main className="flex min-h-screen flex-col items-center bg-gray-100">
+    <>
+      <Head>
+        <title>WF Embalagens - Distribuidora em Mafra e Rio Negro</title>
+        <meta name="description" content="Encontre embalagens com qualidade, preço baixo e entrega ágil para padarias, mercados e restaurantes em Mafra, Rio Negro e região." />
+      </Head>
       
-      <section className="w-full bg-brand-red-dark">
-        <div className="container mx-auto">
-            <HeroCarousel slides={banners} />
-        </div>
-      </section>
-
-      <section className="w-full bg-white">
-        <div className="hidden md:block container mx-auto max-w-6xl py-10 px-4">
-          <div className="text-center mb-10">
-            <h2 className="text-4xl font-bold text-gray-800">Por que escolher a WF Embalagens?</h2>
-            <p className="text-lg text-gray-600 mt-2">Nosso foco é atender microempresas com excelência e dedicação</p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-              {features.map(feature => <FeatureCard key={feature.title} {...feature} />)}
-          </div>
-        </div>
-        
-        <div className="md:hidden container mx-auto py-5 px-4">
-           <div className="text-center mb-1">
-            <h2 className="text-3xl font-bold text-gray-800">Por que escolher a WF Embalagens?</h2>
-          </div>
-          <EmblaCarousel autoplay={true}>
-            {features.map(feature => (
-              <div className="embla__slide" key={feature.title}>
-                <FeatureCard {...feature} />
-              </div>
-            ))}
-          </EmblaCarousel>
-        </div>
-      </section>
-
-      <section className="w-full bg-gray-100">
-        <div className="container mx-auto max-w-6xl py-5 px-4">
-          <h2 className="text-4xl font-bold mb-5 text-center text-gray-800">Produtos em Destaque</h2>
-          {featuredProducts.length > 0 ? (
-            <EmblaCarousel autoplay={true}>
-                {featuredProducts.map(product => (
-                    <div className="embla__slide" key={product.id}>
-                        <ProductCard product={product} />
-                    </div>
-                ))}
-            </EmblaCarousel>
-          ) : (
-            <p className="text-center text-gray-500">Nenhum produto em destaque no momento.</p>
-          )}
-        </div>
-      </section>
-
-      {featuredCategoriesWithProducts.map(({ category, products }) => (
-        <section key={category} className="w-full bg-white">
-          <div className="container mx-auto max-w-6xl py-10 px-1">
-            <h2 className="text-4xl font-bold mb-8 text-center text-gray-800">{category}</h2>
-            {products.length > 0 ? (
-              <EmblaCarousel autoplay={false}>
-                {products.map(product => (
-                    <div className="embla__slide" key={product.id}>
-                        <ProductCard product={product} />
-                    </div>
-                ))}
-              </EmblaCarousel>
-            ) : (
-              <p className="text-center text-gray-500">Nenhum produto encontrado para esta categoria.</p>
-            )}
-             <div className="text-center mt-10">
-                  <Link href="/produtos" className="bg-brand-red text-white font-bold py-3 px-10 rounded-md hover:bg-brand-red-dark transition-colors">
-                      Ver todos os produtos
-                  </Link>
-             </div>
+      <main className="flex min-h-screen flex-col items-center bg-gray-100">
+        <section className="w-full bg-brand-red-dark">
+          <div className="container mx-auto">
+              <HeroCarousel slides={banners} />
           </div>
         </section>
-      ))}
 
-      <section className="w-full bg-brand-red-dark text-white text-center py-16">
-        <div className="container mx-auto px-4">
-            <h2 className="text-4xl font-bold mb-4">Pronto para fazer seu pedido?</h2>
-            <p className="text-lg mb-8">Entre em contato conosco e solicite seu orçamento personalizado</p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link href="/contato" className="border-2 border-white text-white font-bold py-2 px-6 md:py-3 md:px-8 rounded-md hover:bg-white hover:text-brand-red-dark transition-colors w-full sm:w-auto">
-                    Falar Conosco
-                </Link>
-                <a href="tel:47992886358" className="bg-white text-brand-red-dark font-bold py-2 px-6 md:py-3 md:px-8 rounded-md hover:bg-gray-200 transition-colors w-full sm:w-auto">
-                    Ligar Agora
-                </a>
+        <section className="w-full bg-white">
+          <div className="hidden md:block container mx-auto max-w-6xl py-10 px-4">
+            <div className="text-center mb-10">
+              <h2 className="text-4xl font-bold text-gray-800">Por que escolher a WF Embalagens?</h2>
+              <p className="text-lg text-gray-600 mt-2">Nosso foco é atender microempresas com excelência e dedicação</p>
             </div>
-        </div>
-      </section>
-    </main>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                {features.map(feature => <FeatureCard key={feature.title} {...feature} />)}
+            </div>
+          </div>
+          
+          <div className="md:hidden container mx-auto py-5 px-4">
+             <div className="text-center mb-1">
+              <h2 className="text-3xl font-bold text-gray-800">Por que escolher a WF Embalagens?</h2>
+            </div>
+            <EmblaCarousel autoplay={true}>
+              {features.map(feature => (
+                <div className="embla__slide" key={feature.title}>
+                  <FeatureCard {...feature} />
+                </div>
+              ))}
+            </EmblaCarousel>
+          </div>
+        </section>
+
+        <section className="w-full bg-gray-100">
+          <div className="container mx-auto max-w-6xl py-5 px-4">
+            <h2 className="text-4xl font-bold mb-5 text-center text-gray-800">Produtos em Destaque</h2>
+            {featuredProducts.length > 0 ? (
+              <EmblaCarousel autoplay={true}>
+                  {featuredProducts.map(product => (
+                      <div className="embla__slide" key={product.id}>
+                          <ProductCard product={product} />
+                      </div>
+                  ))}
+              </EmblaCarousel>
+            ) : (
+              <p className="text-center text-gray-500">Nenhum produto em destaque no momento.</p>
+            )}
+          </div>
+        </section>
+
+        {featuredCategoriesWithProducts.map(({ category, products }) => (
+          <section key={category} className="w-full bg-white">
+            <div className="container mx-auto max-w-6xl py-10 px-1">
+              <h2 className="text-4xl font-bold mb-8 text-center text-gray-800">{category}</h2>
+              {products.length > 0 ? (
+                <EmblaCarousel autoplay={false}>
+                  {products.map(product => (
+                      <div className="embla__slide" key={product.id}>
+                          <ProductCard product={product} />
+                      </div>
+                  ))}
+                </EmblaCarousel>
+              ) : (
+                <p className="text-center text-gray-500">Nenhum produto encontrado para esta categoria.</p>
+              )}
+               <div className="text-center mt-10">
+                    <Link href="/produtos" className="bg-brand-red text-white font-bold py-3 px-10 rounded-md hover:bg-brand-red-dark transition-colors">
+                        Ver todos os produtos
+                    </Link>
+               </div>
+            </div>
+          </section>
+        ))}
+
+        <section className="w-full bg-brand-red-dark text-white text-center py-16">
+          <div className="container mx-auto px-4">
+              <h2 className="text-4xl font-bold mb-4">Pronto para fazer seu pedido?</h2>
+              <p className="text-lg mb-8">Entre em contato conosco e solicite seu orçamento personalizado</p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                  <Link href="/contato" className="border-2 border-white text-white font-bold py-2 px-6 md:py-3 md:px-8 rounded-md hover:bg-white hover:text-brand-red-dark transition-colors w-full sm:w-auto">
+                      Falar Conosco
+                  </Link>
+                  <a href="tel:47992886358" className="bg-white text-brand-red-dark font-bold py-2 px-6 md:py-3 md:px-8 rounded-md hover:bg-gray-200 transition-colors w-full sm:w-auto">
+                      Ligar Agora
+                  </a>
+              </div>
+          </div>
+        </section>
+      </main>
+    </>
   );
 }

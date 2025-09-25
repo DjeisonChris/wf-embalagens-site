@@ -1,4 +1,4 @@
-// pages/produtos/index.js (COMPLETO E ATUALIZADO)
+// pages/produtos/index.js
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -17,29 +17,30 @@ export async function getStaticProps() {
     if (data.values) {
         const allProducts = data.values.slice(1).map(row => ({
           id: row[0] || null, name: row[1] || '', description: row[2] || '',
-          volume: row[3] || '', brand: row[4] || null, // <-- MARCA ADICIONADA (ÍNDICE 4)
-          category: row[5] || '', imageUrl: row[6] || '',
-          isFeatured: row[7] || 'NÃO', isActive: row[8] || 'NÃO',
+          volume: row[3] || '', brand: row[4] || null, category: row[5] || '', 
+          imageUrl: row[6] || '', isFeatured: row[7] || 'NÃO', isActive: row[8] || 'NÃO',
           slug: row[9] || null
         }));
         allActiveProducts = allProducts.filter(product => product.isActive === 'SIM');
     }
-  } catch (error) { console.error("Falha ao buscar Produtos:", error.message); }
-  
+  } catch (error) { 
+    console.error("Falha ao buscar Produtos:", error.message); 
+  }
   const activeCategories = [...new Set(allActiveProducts.map(product => product.category))];
   return { 
-    props: { products: allActiveProducts, categories: activeCategories, }, 
+    props: { 
+      products: allActiveProducts, 
+      categories: activeCategories,
+    }, 
     revalidate: 60 
   };
 }
 
 const ProdutosPage = ({ products, categories }) => {
   const router = useRouter();
-
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Todos');
 
-  // Este useEffect agora lê da URL quando a página carrega
   useEffect(() => {
     if (router.isReady) {
       setSearchTerm(router.query.busca || '');
@@ -47,7 +48,6 @@ const ProdutosPage = ({ products, categories }) => {
     }
   }, [router.isReady, router.query]);
 
-  // Esta função lida com a mudança de URL
   const updateUrl = (newCategory, newSearchTerm) => {
     const query = {};
     if (newCategory !== 'Todos') query.categoria = newCategory;
@@ -59,7 +59,6 @@ const ProdutosPage = ({ products, categories }) => {
     }, undefined, { shallow: true, scroll: false });
   };
 
-  // Funções para os filtros chamarem a atualização da URL
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
     updateUrl(category, searchTerm);
@@ -67,7 +66,6 @@ const ProdutosPage = ({ products, categories }) => {
   
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
-    // Adicionamos um debounce para não atualizar a URL a cada letra
     const handler = setTimeout(() => {
       updateUrl(selectedCategory, e.target.value);
     }, 500);
@@ -79,39 +77,45 @@ const ProdutosPage = ({ products, categories }) => {
     .filter(product => product.name.toLowerCase().includes(searchTerm.toLowerCase()));
   
   return (
-    <main className="flex min-h-screen flex-col items-center p-8 md:p-12 bg-gray-50">
-      <div className="w-full max-w-6xl">
-        <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center text-gray-800">Nossos Produtos</h1>
-        <div className="mb-8 p-4 bg-white rounded-lg shadow-md flex flex-col gap-4">
-          <input 
-            type="text"
-            placeholder="Buscar pelo nome do produto..."
-            className="w-full p-2 border border-gray-300 rounded-md"
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-          <div className="flex flex-wrap items-center gap-2">
-             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2zM3 16a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z" /></svg>
-            <button onClick={() => handleCategoryChange('Todos')} className={`px-4 py-2 rounded-md font-bold transition-colors ${selectedCategory === 'Todos' ? 'bg-brand-red text-white' : 'bg-gray-200 hover:bg-brand-yellow'}`}>Todos</button>
-            {categories.map(category => (
-              <button key={category} onClick={() => handleCategoryChange(category)} className={`px-4 py-2 rounded-md font-bold transition-colors ${selectedCategory === category ? 'bg-brand-red text-white' : 'bg-gray-200 hover:bg-brand-yellow'}`}>{category}</button>
-            ))}
+    <>
+      <Head>
+          <title>Nossos Produtos | WF Embalagens</title>
+          <meta name="description" content="Explore nosso catálogo completo de embalagens, incluindo bandejas de isopor, sacolas, potes, embalagens a vácuo e muito mais." />
+      </Head>
+      <main className="flex min-h-screen flex-col items-center p-8 md:p-12 bg-gray-50">
+        <div className="w-full max-w-6xl">
+          <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center text-gray-800">Nossos Produtos</h1>
+          <div className="mb-8 p-4 bg-white rounded-lg shadow-md flex flex-col gap-4">
+            <input 
+              type="text"
+              placeholder="Buscar pelo nome do produto..."
+              className="w-full p-2 border border-gray-300 rounded-md"
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
+            <div className="flex flex-wrap items-center gap-2">
+               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2zM3 16a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z" /></svg>
+              <button onClick={() => handleCategoryChange('Todos')} className={`px-4 py-2 rounded-md font-bold transition-colors ${selectedCategory === 'Todos' ? 'bg-brand-red text-white' : 'bg-gray-200 hover:bg-brand-yellow'}`}>Todos</button>
+              {categories.map(category => (
+                <button key={category} onClick={() => handleCategoryChange(category)} className={`px-4 py-2 rounded-md font-bold transition-colors ${selectedCategory === category ? 'bg-brand-red text-white' : 'bg-gray-200 hover:bg-brand-yellow'}`}>{category}</button>
+              ))}
+            </div>
           </div>
+          {filteredProducts.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {filteredProducts.map((product) => (<ProductCard key={product.id} product={product} />))}
+            </div>
+          ) : (
+            <p className="text-center text-gray-500 py-10">Nenhum produto encontrado com os filtros selecionados.</p>
+          )}
+          <section className="mt-12 text-center bg-white p-8 rounded-lg shadow-md">
+              <h2 className="text-3xl font-bold text-gray-800 mb-2">Não encontrou o que procurava?</h2>
+              <p className="text-gray-600 mb-6">Entre em contato conosco e solicite um orçamento personalizado</p>
+              <Link href="/contato" className="bg-brand-red text-white font-bold py-3 px-8 rounded-md hover:bg-brand-red-dark transition-colors">Solicitar Orçamento Personalizado</Link>
+          </section>
         </div>
-        {filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (<ProductCard key={product.id} product={product} />))}
-          </div>
-        ) : (
-          <p className="text-center text-gray-500 py-10">Nenhum produto encontrado com os filtros selecionados.</p>
-        )}
-        <section className="mt-12 text-center bg-white p-8 rounded-lg shadow-md">
-            <h2 className="text-3xl font-bold text-gray-800 mb-2">Não encontrou o que procurava?</h2>
-            <p className="text-gray-600 mb-6">Entre em contato conosco e solicite um orçamento personalizado</p>
-            <Link href="/contato" className="bg-brand-red text-white font-bold py-3 px-8 rounded-md hover:bg-brand-red-dark transition-colors">Solicitar Orçamento Personalizado</Link>
-        </section>
-      </div>
-    </main>
+      </main>
+    </>
   );
 };
 export default ProdutosPage;
