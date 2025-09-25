@@ -41,18 +41,28 @@ export async function getStaticProps({ params }) {
   const apiKey = process.env.GOOGLE_SHEETS_API_KEY;
   const productsSheetName = 'Produtos';
   const productsUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${productsSheetName}?key=${apiKey}`;
+  
   let product = null;
   try {
     const res = await fetch(productsUrl);
     const data = await res.json();
     if (data.values) {
-      const allProducts = data.values.slice(1).filter(row => row[9]).map(row => ({
-          id: row[0] || null, name: row[1] || '', description: row[2] || '',
-          volume: row[3] || '', brand: row[4] || null, // <-- MARCA ADICIONADA (ÍNDICE 4)
-          category: row[5] || '', imageUrl: row[6] || '',
-          slug: row[9] || null,
-        }));
-      product = allProducts.find(p => p.slug === slug);
+      const allProducts = data.values.slice(1).filter(row => row[9]); // Filtra linhas sem slug
+      
+      const productRow = allProducts.find(row => row[9] === slug); // Encontra a linha pelo slug
+
+      if (productRow) {
+        product = {
+          id: productRow[0] || null,
+          name: productRow[1] || '',
+          description: productRow[2] || 'Descrição não disponível.', // Garante que a descrição nunca seja nula
+          volume: productRow[3] || '',
+          brand: productRow[4] || null,
+          category: productRow[5] || '',
+          imageUrl: productRow[6] || '',
+          slug: productRow[9] || null,
+        };
+      }
     }
   } catch (error) { console.error(`Falha ao buscar o produto ${slug}:`, error.message); }
 
