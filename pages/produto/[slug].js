@@ -1,11 +1,9 @@
-// pages/produto/[category]/[slug].js
+// pages/produto/[slug].js
 import { useBudget } from '@/context/BudgetContext';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { FaArrowLeft } from 'react-icons/fa';
 import Head from 'next/head';
-
-const slugify = (text) => text.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
 
 export async function getStaticPaths() {
   const sheetId = process.env.GOOGLE_SHEET_ID;
@@ -17,11 +15,8 @@ export async function getStaticPaths() {
     const res = await fetch(productsUrl);
     const data = await res.json();
     if (data.values) {
-      paths = data.values.slice(1).filter(row => row[5] && row[9]).map(row => ({
-        params: { 
-          category: slugify(row[5]),
-          slug: row[9]
-        },
+      paths = data.values.slice(1).filter(row => row[9]).map(row => ({
+        params: { slug: row[9] },
       }));
     }
   } catch (error) { console.error("Falha ao buscar paths:", error.message); }
@@ -41,7 +36,8 @@ export async function getStaticProps({ params }) {
     if (data.values) {
       const allProducts = data.values.slice(1).filter(row => row[9]).map(row => ({
           id: row[0] || null, name: row[1] || '', description: row[2] || '',
-          volume: row[3] || '', brand: row[4] || null, category: row[5] || '', 
+          volume: row[3] || '', brand: row[4] || null, 
+          categories: row[5] ? row[5].split(',').map(cat => cat.trim()) : [],
           imageUrl: row[6] || '', slug: row[9] || null,
         }));
       product = allProducts.find(p => p.slug === slug);
@@ -57,16 +53,13 @@ const ProdutoDetalhePage = ({ product }) => {
   return (
     <>
       <Head>
-          <title>{`${product.name} | WF Embalagens`}</title>
-          <meta name="description" content={product.description} />
+        <title>{`${product.name} | WF Embalagens`}</title>
+        <meta name="description" content={product.description} />
       </Head>
       <main className="flex min-h-screen flex-col items-center py-16 bg-white">
         <div className="w-full container mx-auto max-w-5xl px-4">
           <div className="mb-8">
-              <button
-                  onClick={() => router.back()}
-                  className="flex items-center gap-2 text-gray-600 hover:text-brand-red font-semibold transition-colors"
-              >
+              <button onClick={() => router.back()} className="flex items-center gap-2 text-gray-600 hover:text-brand-red font-semibold transition-colors">
                   <FaArrowLeft />
                   Voltar para a lista
               </button>
@@ -78,25 +71,18 @@ const ProdutoDetalhePage = ({ product }) => {
               </div>
             </div>
             <div className="flex flex-col">
-              {product.brand && (
-                <p className="text-sm text-gray-500 font-bold uppercase tracking-wider mb-2">{product.brand}</p>
-              )}
               <h1 className="text-4xl font-extrabold text-gray-900 mb-3">{product.name}</h1>
-              <span className="bg-gray-200 text-gray-700 text-sm font-semibold px-3 py-1 rounded-full mb-3 self-start">
-                {product.category}
-              </span>
+              {/* EXIBINDO AS MÚLTIPLAS CATEGORIAS */}
+              <div className="flex flex-wrap items-center gap-2 mb-4">
+                {product.categories.map(category => (
+                    <span key={category} className="bg-brand-red text-white text-xs font-bold px-3 py-1 rounded-full self-start">
+                        {category}
+                    </span>
+                ))}
+              </div>
               <p className="text-lg text-gray-500 mb-4">{product.volume}</p>
-              <div className="prose">
-                <p>{product.description}</p>
-              </div>
-              <div className="mt-6">
-                <button 
-                  onClick={() => addToBudget(product)}
-                  className="w-full bg-brand-red text-white py-3 rounded-md hover:bg-brand-red-dark transition-colors font-bold text-lg"
-                >
-                  Adicionar ao Orçamento
-                </button>
-              </div>
+              <div className="prose"> <p>{product.description}</p> </div>
+              <div className="mt-6"> <button onClick={() => addToBudget(product)} className="w-full bg-brand-red text-white py-3 ..."> Adicionar ao Orçamento </button> </div>
             </div>
           </div>
         </div>
