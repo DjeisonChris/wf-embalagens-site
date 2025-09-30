@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { FaArrowLeft } from 'react-icons/fa';
 import Head from 'next/head';
+import Link from 'next/link';
 
 export async function getStaticPaths() {
   const sheetId = process.env.GOOGLE_SHEET_ID;
@@ -53,13 +54,16 @@ const ProdutoDetalhePage = ({ product }) => {
   return (
     <>
       <Head>
-        <title>{`${product.name} | WF Embalagens`}</title>
-        <meta name="description" content={product.description} />
+          <title>{`${product.name} | WF Embalagens`}</title>
+          <meta name="description" content={product.description} />
       </Head>
       <main className="flex min-h-screen flex-col items-center py-16 bg-white">
         <div className="w-full container mx-auto max-w-5xl px-4">
           <div className="mb-8">
-              <button onClick={() => router.back()} className="flex items-center gap-2 text-gray-600 hover:text-brand-red font-semibold transition-colors">
+              <button
+                  onClick={() => router.back()}
+                  className="flex items-center gap-2 text-gray-600 hover:text-brand-red font-semibold transition-colors"
+              >
                   <FaArrowLeft />
                   Voltar para a lista
               </button>
@@ -71,18 +75,29 @@ const ProdutoDetalhePage = ({ product }) => {
               </div>
             </div>
             <div className="flex flex-col">
+              {product.brand && (
+                <p className="text-sm text-gray-500 font-bold uppercase tracking-wider mb-2">{product.brand}</p>
+              )}
               <h1 className="text-4xl font-extrabold text-gray-900 mb-3">{product.name}</h1>
-              {/* EXIBINDO AS MÚLTIPLAS CATEGORIAS */}
               <div className="flex flex-wrap items-center gap-2 mb-4">
                 {product.categories.map(category => (
-                    <span key={category} className="bg-brand-red text-white text-xs font-bold px-3 py-1 rounded-full self-start">
-                        {category}
-                    </span>
+                  <Link key={category} href={`/produtos?categoria=${encodeURIComponent(category)}`} className="bg-gray-200 text-gray-700 text-xs font-semibold px-3 py-1 rounded-full self-start hover:bg-gray-300">
+                      {category}
+                  </Link>
                 ))}
               </div>
               <p className="text-lg text-gray-500 mb-4">{product.volume}</p>
-              <div className="prose"> <p>{product.description}</p> </div>
-              <div className="mt-6"> <button onClick={() => addToBudget(product)} className="w-full bg-brand-red text-white py-3 ..."> Adicionar ao Orçamento </button> </div>
+              <div className="prose">
+                <p>{product.description}</p>
+              </div>
+              <div className="mt-6">
+                <button 
+                  onClick={() => addToBudget(product)}
+                  className="w-full bg-brand-red text-white py-3 rounded-md hover:bg-brand-red-dark transition-colors font-bold text-lg"
+                >
+                  Adicionar ao Orçamento
+                </button>
+              </div>
             </div>
           </div>
         </div>

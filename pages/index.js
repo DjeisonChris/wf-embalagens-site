@@ -36,7 +36,8 @@ export async function getStaticProps() {
     if (productsData.values) {
       const allProducts = productsData.values.slice(1).map(row => ({
         id: row[0] || null, name: row[1] || '', description: row[2] || '',
-        volume: row[3] || '', brand: row[4] || null, category: row[5] || '', 
+        volume: row[3] || '', brand: row[4] || null, 
+        categories: row[5] ? row[5].split(',').map(cat => cat.trim()) : [],
         imageUrl: row[6] || '', isFeatured: row[7] || 'NÃO', isActive: row[8] || 'NÃO',
         slug: row[9] || null
       })).filter(p => p.isActive === 'SIM');
@@ -53,7 +54,7 @@ export async function getStaticProps() {
         if (featuredCategoryNames.length > 0) {
           featuredCategoriesWithProducts = featuredCategoryNames.map(categoryName => ({
             category: categoryName,
-            products: allProducts.filter(p => p.category === categoryName)
+            products: allProducts.filter(p => p.categories.includes(categoryName))
           }));
         }
       }
