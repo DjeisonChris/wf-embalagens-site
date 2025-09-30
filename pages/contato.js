@@ -70,7 +70,7 @@ const ContatoPage = () => {
                 </div>
                 <div>
                   <label className="block text-gray-700 font-medium mb-1">Mensagem *</label>
-                  <textarea name="message" placeholder="Digite sua mensagem aqui..." className="w-full p-3 border rounded-md" rows="5" value={formData.message} onChange={handleInputChange}></textarea>
+                  <textarea name="message" placeholder="Digite sua mensagem aqui..." className="w-full p-3 border rounded-md" rows="8" value={formData.message} onChange={handleInputChange}></textarea>
                 </div>
                 <div>
                   <button type="button" onClick={handleWhatsAppSubmit} className="w-full bg-brand-red text-white py-3 rounded-md hover:bg-brand-red-dark transition-colors font-bold text-lg flex items-center justify-center gap-2">
@@ -116,8 +116,12 @@ const ContatoPage = () => {
                     </a>
                 </div>
             </div>
+               {/* ADICIONE O MAPA AQUI */}
+            <div className="bg-white rounded-lg shadow-md border overflow-hidden">
+              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4288.08267281887!2d-49.774333500000004!3d-26.082201599999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94dd9344761b5163%3A0xbe39a0e145493425!2sWF%20Embalagens!5e1!3m2!1spt-BR!2sbr!4v1759195729181!5m2!1spt-BR!2sbr" width="100%" height="450" style={{ border:0 }} allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+              
+            </div>
           </div>
-
         </div>
       </div>
     </main>
