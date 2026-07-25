@@ -1,4 +1,3 @@
-// pages/produto/[slug].js
 import { useBudget } from '@/context/BudgetContext';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -51,6 +50,12 @@ export async function getStaticProps({ params }) {
 const ProdutoDetalhePage = ({ product }) => {
   const { addToBudget } = useBudget();
   const router = useRouter();
+
+  // Correção de Roteamento de Imagem: Força a barra invertida "/" no início do caminho da imagem
+  const imageSrc = product.imageUrl 
+    ? (product.imageUrl.startsWith('/') ? product.imageUrl : `/${product.imageUrl}`) 
+    : '/images/placeholder.png';
+
   return (
     <>
       <Head>
@@ -71,7 +76,8 @@ const ProdutoDetalhePage = ({ product }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
             <div className="bg-white rounded-lg border shadow-md p-4 flex items-center justify-center">
               <div className="relative w-full h-96">
-                  <Image src={product.imageUrl || '/images/placeholder.png'} alt={product.name} fill className="object-contain" />
+                  {/* Utilização da nova variável segura imageSrc */}
+                  <Image src={imageSrc} alt={product.name} fill className="object-contain" />
               </div>
             </div>
             <div className="flex flex-col">
